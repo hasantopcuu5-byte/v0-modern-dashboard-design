@@ -1,5 +1,5 @@
-import { Dashboard } from "@/components/dashboard"
+import { ShipPerformanceApp } from "@/components/ship";
 
 export default function Page() {
-  return <Dashboard />
+  return <ShipPerformanceApp />;
 }
