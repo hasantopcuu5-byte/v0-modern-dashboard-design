@@ -6,6 +6,7 @@ import { ShipDataForm } from "./ship-data-form";
 import { AdminDashboard } from "./admin-dashboard";
 import { ShipFormData, defaultFormData } from "@/lib/ship-data-types";
 import { Ship, LayoutDashboard, Anchor } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function ShipPerformanceApp() {
   const [formData, setFormData] = useState<ShipFormData>(defaultFormData);
@@ -62,6 +63,8 @@ export function ShipPerformanceApp() {
                 </TabsTrigger>
               </TabsList>
             </Tabs>
+
+            <ThemeToggle />
           </div>
         </div>
       </header>
