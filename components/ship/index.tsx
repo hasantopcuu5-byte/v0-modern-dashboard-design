@@ -4,13 +4,17 @@ import { useState, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShipDataForm } from "./ship-data-form";
 import { AdminDashboard } from "./admin-dashboard";
+import { AuthModal } from "./auth-modal";
 import { ShipFormData, defaultFormData } from "@/lib/ship-data-types";
-import { Ship, LayoutDashboard, Anchor } from "lucide-react";
+import { Ship, LayoutDashboard, Anchor, LogOut } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
 
 export function ShipPerformanceApp() {
   const [formData, setFormData] = useState<ShipFormData>(defaultFormData);
   const [activeTab, setActiveTab] = useState("data-entry");
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
   const handleExport = useCallback(() => {
     const dataStr = JSON.stringify(formData, null, 2);
@@ -28,6 +32,18 @@ export function ShipPerformanceApp() {
   const handleImport = useCallback((data: ShipFormData) => {
     setFormData(data);
   }, []);
+
+  const handleLogout = (type: "user" | "admin") => {
+    if (type === "user") {
+      setIsUserAuthenticated(false);
+    } else {
+      setIsAdminAuthenticated(false);
+    }
+  };
+
+  // Check if current tab requires authentication
+  const needsUserAuth = activeTab === "data-entry" && !isUserAuthenticated;
+  const needsAdminAuth = activeTab === "admin-dashboard" && !isAdminAuthenticated;
 
   return (
     <div className="min-h-screen bg-background">
@@ -65,6 +81,22 @@ export function ShipPerformanceApp() {
             </Tabs>
 
             <ThemeToggle />
+
+            {/* Logout Button */}
+            {((activeTab === "data-entry" && isUserAuthenticated) ||
+              (activeTab === "admin-dashboard" && isAdminAuthenticated)) && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  handleLogout(activeTab === "data-entry" ? "user" : "admin")
+                }
+                className="gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Cikis</span>
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -94,15 +126,31 @@ export function ShipPerformanceApp() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsContent value="data-entry" className="mt-0">
-            <ShipDataForm
-              formData={formData}
-              onFormChange={setFormData}
-              onExport={handleExport}
-            />
+          <TabsContent value="data-entry" className="mt-0 relative">
+            {needsUserAuth && (
+              <AuthModal
+                type="user"
+                onAuthenticate={() => setIsUserAuthenticated(true)}
+              />
+            )}
+            <div className={needsUserAuth ? "blur-sm pointer-events-none select-none" : ""}>
+              <ShipDataForm
+                formData={formData}
+                onFormChange={setFormData}
+                onExport={handleExport}
+              />
+            </div>
           </TabsContent>
-          <TabsContent value="admin-dashboard" className="mt-0">
-            <AdminDashboard formData={formData} onImport={handleImport} />
+          <TabsContent value="admin-dashboard" className="mt-0 relative">
+            {needsAdminAuth && (
+              <AuthModal
+                type="admin"
+                onAuthenticate={() => setIsAdminAuthenticated(true)}
+              />
+            )}
+            <div className={needsAdminAuth ? "blur-sm pointer-events-none select-none" : ""}>
+              <AdminDashboard formData={formData} onImport={handleImport} />
+            </div>
           </TabsContent>
         </Tabs>
       </main>
