@@ -34,6 +34,7 @@ import {
   Droplet,
   ArrowUpRight,
   ArrowDownRight,
+  Trash2,
 } from "lucide-react";
 import { useCallback, useState } from "react";
 
@@ -643,6 +644,85 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Water, Sludge & Waste Chart */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Trash2 className="h-4 w-4 text-primary" />
+            Fresh Water, Sludge & Garbage
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  {
+                    name: "Fresh Water",
+                    value: formData.freshWater,
+                    fill: "#3b82f6",
+                  },
+                  {
+                    name: "Sludge",
+                    value: formData.sludge,
+                    fill: "#92400e",
+                  },
+                  {
+                    name: "Garbage",
+                    value: formData.garbage,
+                    fill: "#dc2626",
+                  },
+                ]}
+                layout="vertical"
+                margin={{ left: 20, right: 30 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <XAxis
+                  type="number"
+                  tick={{ fontSize: 12 }}
+                  className="text-muted-foreground"
+                  unit=" m³"
+                />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  tick={{ fontSize: 12 }}
+                  className="text-muted-foreground"
+                  width={100}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    borderColor: "hsl(var(--border))",
+                    borderRadius: "8px",
+                  }}
+                  formatter={(value: number) => [`${value} m³`, "Miktar"]}
+                />
+                <Bar
+                  dataKey="value"
+                  radius={[0, 4, 4, 0]}
+                  barSize={40}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-4 flex flex-wrap justify-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: "#3b82f6" }} />
+              <span className="text-sm text-muted-foreground">Fresh Water: {formData.freshWater} m³</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: "#92400e" }} />
+              <span className="text-sm text-muted-foreground">Sludge: {formData.sludge} m³</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: "#dc2626" }} />
+              <span className="text-sm text-muted-foreground">Garbage: {formData.garbage} m³</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
