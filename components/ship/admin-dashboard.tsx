@@ -35,6 +35,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Trash2,
+  FileText,
 } from "lucide-react";
 import { useCallback, useState } from "react";
 
@@ -493,7 +494,10 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                       backgroundColor: "hsl(var(--card))",
                       borderColor: "hsl(var(--border))",
                       borderRadius: "8px",
+                      color: "hsl(var(--card-foreground))",
                     }}
+                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
+                    labelStyle={{ color: "hsl(var(--card-foreground))" }}
                   />
                   <Legend />
                   <Line
@@ -553,7 +557,11 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                       backgroundColor: "hsl(var(--card))",
                       borderColor: "hsl(var(--border))",
                       borderRadius: "8px",
+                      color: "hsl(var(--card-foreground))",
                     }}
+                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
+                    labelStyle={{ color: "hsl(var(--card-foreground))" }}
+                    formatter={(value: number) => [`${value} MT`, "Miktar"]}
                   />
                   <Legend />
                   <Bar
@@ -608,7 +616,10 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                       backgroundColor: "hsl(var(--card))",
                       borderColor: "hsl(var(--border))",
                       borderRadius: "8px",
+                      color: "hsl(var(--card-foreground))",
                     }}
+                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
+                    labelStyle={{ color: "hsl(var(--card-foreground))" }}
                   />
                   <Legend />
                   <Area
@@ -692,16 +703,16 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                   width={100}
                 />
                 <Tooltip
-  contentStyle={{
-    backgroundColor: "hsl(var(--card))",
-    borderColor: "hsl(var(--border))",
-    borderRadius: "8px",
-    color: "hsl(var(--card-foreground))",
-  }}
-  itemStyle={{ color: "hsl(var(--card-foreground))" }}
-  labelStyle={{ color: "hsl(var(--card-foreground))" }}
-  formatter={(value: number) => [`${value} m³`, "Miktar"]}
-/>
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    borderColor: "hsl(var(--border))",
+                    borderRadius: "8px",
+                    color: "hsl(var(--card-foreground))",
+                  }}
+                  itemStyle={{ color: "hsl(var(--card-foreground))" }}
+                  labelStyle={{ color: "hsl(var(--card-foreground))" }}
+                  formatter={(value: number) => [`${value} m³`, "Miktar"]}
+                />
                 <Bar
                   dataKey="value"
                   radius={[0, 4, 4, 0]}
@@ -722,6 +733,74 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded" style={{ backgroundColor: "#dc2626" }} />
               <span className="text-sm text-muted-foreground">Garbage: {formData.garbage} m³</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* NEW SECTION: DETAILED VOYAGE REPORT (ALL FORM DATA) */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <FileText className="h-4 w-4 text-primary" />
+            Detailed Voyage Report (Raw Data)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+            {/* General Details */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-sm border-b pb-1">General Details</h4>
+              <dl className="space-y-2 text-sm">
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">Operation</dt><dd className="font-medium capitalize"><Badge variant="outline">{formData.operation.replace('-', ' ')}</Badge></dd></div>
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">Date & Time</dt><dd className="font-medium">{new Date(formData.dateTime).toLocaleString()}</dd></div>
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">C/P Term</dt><dd className="font-medium">{formData.charterpartyTerm || '-'}</dd></div>
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">Cargo Qty</dt><dd className="font-medium">{formData.cargoQuantity.toLocaleString()} MT</dd></div>
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">M/E Slip</dt><dd className="font-medium">{formData.meSlipPercent}%</dd></div>
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">Avr. RPM</dt><dd className="font-medium">{formData.avgRpm}</dd></div>
+              </dl>
+            </div>
+
+            {/* Engine & Consumables */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-sm border-b pb-1">Engine & Consumables</h4>
+              <dl className="space-y-2 text-sm">
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">EPL Status</dt><dd><Badge variant={formData.eplStatus ? "default" : "secondary"}>{formData.eplStatus ? "ON" : "OFF"}</Badge></dd></div>
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">M/E Load / RHs</dt><dd className="font-medium">{formData.meLoadPercent}% <span className="text-muted-foreground">|</span> {formData.meDailyRunningHrs} hrs</dd></div>
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">DG Power / Boiler</dt><dd className="font-medium">{formData.dgTotalPowerKw} kW <span className="text-muted-foreground">|</span> {formData.boilerDailyHrs} hrs</dd></div>
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">M/E Cyl / Sys Oil</dt><dd className="font-medium">{formData.meCylOil} L <span className="text-muted-foreground">|</span> {formData.meSysOil} L</dd></div>
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">A/E Sys Oil</dt><dd className="font-medium">{formData.aeSysOil} L</dd></div>
+                <div className="flex justify-between items-center"><dt className="text-muted-foreground">Slop / Sewage</dt><dd className="font-medium">{formData.slop} m³ <span className="text-muted-foreground">|</span> {formData.sewage} m³</dd></div>
+              </dl>
+            </div>
+
+            {/* Weather Conditions */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-sm border-b pb-1">Weather Conditions</h4>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <span className="text-xs text-muted-foreground block mb-1">Owner Actual</span>
+                  <div className="bg-muted/30 border p-2 rounded-lg flex justify-between items-center">
+                    <span className="font-medium text-xs">W: {formData.weatherOwnerWind} kts <span className="text-muted-foreground px-1">|</span> S: {formData.weatherOwnerSwell} m</span>
+                    <Badge variant="outline" className="capitalize text-[10px]">{formData.weatherOwnerSeaState.replace('-', ' ')}</Badge>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground flex justify-end mt-1">Adverse Current: {formData.weatherOwnerAdverseCurrent} kts</span>
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground block mb-1">Charterer Allowed</span>
+                  <div className="bg-muted/30 border p-2 rounded-lg flex justify-between items-center">
+                    <span className="font-medium text-xs">W: {formData.weatherChartererWind} kts <span className="text-muted-foreground px-1">|</span> S: {formData.weatherChartererSwell} m</span>
+                    <Badge variant="outline" className="capitalize text-[10px]">{formData.weatherChartererSeaState.replace('-', ' ')}</Badge>
+                  </div>
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground block mb-1">Weather Routing</span>
+                  <div className="bg-muted/30 border p-2 rounded-lg flex justify-between items-center">
+                    <span className="font-medium text-xs">W: {formData.weatherRoutingWind} kts <span className="text-muted-foreground px-1">|</span> S: {formData.weatherRoutingSwell} m</span>
+                    <Badge variant="outline" className="capitalize text-[10px]">{formData.weatherRoutingSeaState.replace('-', ' ')}</Badge>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>
