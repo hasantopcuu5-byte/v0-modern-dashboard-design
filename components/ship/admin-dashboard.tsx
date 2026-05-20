@@ -1,10 +1,3 @@
-Bu hata (`Expected '</', got '<eof>'`), **"Dosyanın sonuna gelindi ama kapanmamış etiketler (tag'ler) var"** anlamına gelir.
-
-Bunun %99 sebebi, bir önceki mesajımdaki kodu kopyalarken **en alttaki satırları eksik kopyalamış (veya yapıştırırken dosyanın sonunun kesilmiş) olmanızdır.** Hata satırına (563. satır) baktığımızda, kodun tam bir grafiğin (Tooltip'in) ortasında aniden bıçak gibi kesildiğini görüyoruz.
-
-Lütfen `admin-dashboard.tsx` dosyasının içindeki **her şeyi silin (Ctrl+A ve Delete)** ve aşağıdaki kod kutusunun sağ üst köşesindeki **"Kopyala" (Copy)** butonuna tıklayarak kodun tamamını (hiçbir satır atlamadan) yapıştırın:
-
-```tsx
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
