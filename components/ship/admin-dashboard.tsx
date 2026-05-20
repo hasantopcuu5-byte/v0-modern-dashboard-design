@@ -489,16 +489,12 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     className="text-muted-foreground"
                   />
                   <Tooltip
-  contentStyle={{
-    backgroundColor: "hsl(var(--card))",
-    borderColor: "hsl(var(--border))",
-    borderRadius: "8px",
-    color: "hsl(var(--card-foreground))", // Arka plana uygun metin rengi
-  }}
-  itemStyle={{ color: "hsl(var(--card-foreground))" }} // Değerlerin rengi
-  labelStyle={{ color: "hsl(var(--card-foreground))" }} // Başlığın rengi
-  formatter={(value: number) => [`${value} m³`, "Miktar"]}
-/>
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--card))",
+                      borderColor: "hsl(var(--border))",
+                      borderRadius: "8px",
+                    }}
+                  />
                   <Legend />
                   <Line
                     type="monotone"
@@ -696,13 +692,16 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                   width={100}
                 />
                 <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    borderColor: "hsl(var(--border))",
-                    borderRadius: "8px",
-                  }}
-                  formatter={(value: number) => [`${value} m³`, "Miktar"]}
-                />
+  contentStyle={{
+    backgroundColor: "hsl(var(--card))",
+    borderColor: "hsl(var(--border))",
+    borderRadius: "8px",
+    color: "hsl(var(--card-foreground))",
+  }}
+  itemStyle={{ color: "hsl(var(--card-foreground))" }}
+  labelStyle={{ color: "hsl(var(--card-foreground))" }}
+  formatter={(value: number) => [`${value} m³`, "Miktar"]}
+/>
                 <Bar
                   dataKey="value"
                   radius={[0, 4, 4, 0]}
