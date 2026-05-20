@@ -1,3 +1,10 @@
+Bu hata (`Expected '</', got '<eof>'`), **"Dosyanın sonuna gelindi ama kapanmamış etiketler (tag'ler) var"** anlamına gelir.
+
+Bunun %99 sebebi, bir önceki mesajımdaki kodu kopyalarken **en alttaki satırları eksik kopyalamış (veya yapıştırırken dosyanın sonunun kesilmiş) olmanızdır.** Hata satırına (563. satır) baktığımızda, kodun tam bir grafiğin (Tooltip'in) ortasında aniden bıçak gibi kesildiğini görüyoruz.
+
+Lütfen `admin-dashboard.tsx` dosyasının içindeki **her şeyi silin (Ctrl+A ve Delete)** ve aşağıdaki kod kutusunun sağ üst köşesindeki **"Kopyala" (Copy)** butonuna tıklayarak kodun tamamını (hiçbir satır atlamadan) yapıştırın:
+
+```tsx
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -560,3 +567,332 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                       borderRadius: "8px",
                       color: "hsl(var(--card-foreground))",
                     }}
+                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
+                    labelStyle={{ color: "hsl(var(--card-foreground))" }}
+                    formatter={(value: number) => [`${value} MT`, "Miktar"]}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="vlsfoOwner"
+                    name="VLSFO Owner"
+                    fill="hsl(var(--primary))"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="vlsfoCharterer"
+                    name="VLSFO Charterer"
+                    fill="hsl(var(--accent))"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Weather Impact Chart */}
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Compass className="h-4 w-4 text-primary" />
+              Weather Impact Analysis
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 12 }}
+                    className="text-muted-foreground"
+                  />
+                  <YAxis
+                    yAxisId="left"
+                    tick={{ fontSize: 12 }}
+                    className="text-muted-foreground"
+                  />
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    tick={{ fontSize: 12 }}
+                    className="text-muted-foreground"
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--card))",
+                      borderColor: "hsl(var(--border))",
+                      borderRadius: "8px",
+                      color: "hsl(var(--card-foreground))",
+                    }}
+                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
+                    labelStyle={{ color: "hsl(var(--card-foreground))" }}
+                  />
+                  <Legend />
+                  <Area
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="wind"
+                    name="Wind (kts)"
+                    fill="hsl(var(--primary))"
+                    fillOpacity={0.2}
+                    stroke="hsl(var(--primary))"
+                  />
+                  <Area
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="swell"
+                    name="Swell (m)"
+                    fill="hsl(var(--accent))"
+                    fillOpacity={0.2}
+                    stroke="hsl(var(--accent))"
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="sogStwDiff"
+                    name="SOG-STW Diff"
+                    stroke="hsl(var(--destructive))"
+                    strokeWidth={2}
+                    dot={{ r: 4 }}
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Water, Sludge & Waste Chart */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Trash2 className="h-4 w-4 text-primary" />
+            Fresh Water, Sludge & Garbage
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  {
+                    name: "Fresh Water",
+                    value: formData.freshWater,
+                    fill: "#3b82f6",
+                  },
+                  {
+                    name: "Sludge",
+                    value: formData.sludge,
+                    fill: "#92400e",
+                  },
+                  {
+                    name: "Garbage",
+                    value: formData.garbage,
+                    fill: "#dc2626",
+                  },
+                ]}
+                layout="vertical"
+                margin={{ left: 20, right: 30 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <XAxis
+                  type="number"
+                  tick={{ fontSize: 12 }}
+                  className="text-muted-foreground"
+                  unit=" m³"
+                />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  tick={{ fontSize: 12 }}
+                  className="text-muted-foreground"
+                  width={100}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    borderColor: "hsl(var(--border))",
+                    borderRadius: "8px",
+                    color: "hsl(var(--card-foreground))",
+                  }}
+                  itemStyle={{ color: "hsl(var(--card-foreground))" }}
+                  labelStyle={{ color: "hsl(var(--card-foreground))" }}
+                  formatter={(value: number) => [`${value} m³`, "Miktar"]}
+                />
+                <Bar
+                  dataKey="value"
+                  radius={[0, 4, 4, 0]}
+                  barSize={40}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-4 flex flex-wrap justify-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: "#3b82f6" }} />
+              <span className="text-sm text-muted-foreground">Fresh Water: {formData.freshWater} m³</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: "#92400e" }} />
+              <span className="text-sm text-muted-foreground">Sludge: {formData.sludge} m³</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: "#dc2626" }} />
+              <span className="text-sm text-muted-foreground">Garbage: {formData.garbage} m³</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* NEW SECTION: DETAILED RAW DATA SEPARATED INTO CARDS */}
+      <div className="space-y-6 pt-4 border-t border-border">
+        <h3 className="text-lg font-semibold tracking-tight">Detailed Voyage Data</h3>
+
+        {/* 1. General Details Card */}
+        <Card>
+          <CardHeader className="pb-3 bg-muted/20 border-b">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Anchor className="h-4 w-4 text-primary" />
+              General Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-sm">
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">Operation</span>
+                <p className="font-medium capitalize"><Badge variant="outline">{formData.operation.replace('-', ' ')}</Badge></p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">Date & Time</span>
+                <p className="font-medium">{new Date(formData.dateTime).toLocaleString()}</p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">C/P Term</span>
+                <p className="font-medium">{formData.charterpartyTerm || '-'}</p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">Cargo Qty</span>
+                <p className="font-medium">{formData.cargoQuantity.toLocaleString()} MT</p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">M/E Slip</span>
+                <p className="font-medium">{formData.meSlipPercent}%</p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">Avr. RPM</span>
+                <p className="font-medium">{formData.avgRpm}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 2. Engine & Consumables Details Card */}
+        <Card>
+          <CardHeader className="pb-3 bg-muted/20 border-b">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Gauge className="h-4 w-4 text-primary" />
+              Engine & Consumables Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-sm">
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">EPL Status</span>
+                <p><Badge variant={formData.eplStatus ? "default" : "secondary"}>{formData.eplStatus ? "ON" : "OFF"}</Badge></p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">M/E Load / RHs</span>
+                <p className="font-medium">{formData.meLoadPercent}% <span className="text-muted-foreground mx-1">|</span> {formData.meDailyRunningHrs} hrs</p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">DG Power / Boiler</span>
+                <p className="font-medium">{formData.dgTotalPowerKw} kW <span className="text-muted-foreground mx-1">|</span> {formData.boilerDailyHrs} hrs</p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">M/E Cyl / Sys Oil</span>
+                <p className="font-medium">{formData.meCylOil} L <span className="text-muted-foreground mx-1">|</span> {formData.meSysOil} L</p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">A/E Sys Oil</span>
+                <p className="font-medium">{formData.aeSysOil} L</p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">Slop / Sewage</span>
+                <p className="font-medium">{formData.slop} m³ <span className="text-muted-foreground mx-1">|</span> {formData.sewage} m³</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 3. Weather Conditions Card */}
+        <Card>
+          <CardHeader className="pb-3 bg-muted/20 border-b">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <CloudSun className="h-4 w-4 text-primary" />
+              Weather Conditions
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="grid md:grid-cols-3 gap-6 text-sm">
+              <div className="space-y-2">
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider block">Owner Actual</span>
+                <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Wind</span>
+                    <span>{formData.weatherOwnerWind} kts</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Swell</span>
+                    <span>{formData.weatherOwnerSwell} m</span>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
+                    <Badge variant="outline" className="capitalize text-xs font-normal bg-background">{formData.weatherOwnerSeaState.replace('-', ' ')}</Badge>
+                    <span className="text-xs text-muted-foreground">Adv. Curr: {formData.weatherOwnerAdverseCurrent} kts</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider block">Charterer Allowed</span>
+                <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Wind</span>
+                    <span>{formData.weatherChartererWind} kts</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Swell</span>
+                    <span>{formData.weatherChartererSwell} m</span>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
+                    <Badge variant="outline" className="capitalize text-xs font-normal bg-background">{formData.weatherChartererSeaState.replace('-', ' ')}</Badge>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider block">Weather Routing</span>
+                <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Wind</span>
+                    <span>{formData.weatherRoutingWind} kts</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Swell</span>
+                    <span>{formData.weatherRoutingSwell} m</span>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
+                    <Badge variant="outline" className="capitalize text-xs font-normal bg-background">{formData.weatherRoutingSeaState.replace('-', ' ')}</Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+```
