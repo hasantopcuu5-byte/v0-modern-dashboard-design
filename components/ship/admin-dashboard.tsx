@@ -489,12 +489,16 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     className="text-muted-foreground"
                   />
                   <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      borderColor: "hsl(var(--border))",
-                      borderRadius: "8px",
-                    }}
-                  />
+  contentStyle={{
+    backgroundColor: "hsl(var(--card))",
+    borderColor: "hsl(var(--border))",
+    borderRadius: "8px",
+    color: "hsl(var(--card-foreground))", // Arka plana uygun metin rengi
+  }}
+  itemStyle={{ color: "hsl(var(--card-foreground))" }} // Değerlerin rengi
+  labelStyle={{ color: "hsl(var(--card-foreground))" }} // Başlığın rengi
+  formatter={(value: number) => [`${value} m³`, "Miktar"]}
+/>
                   <Legend />
                   <Line
                     type="monotone"
