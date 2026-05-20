@@ -52,50 +52,49 @@ export function ShipPerformanceApp() {
           <ThemeToggle />
         </div>
         
-        <div className="text-center mb-8">
-          {/* ŞİRKET LOGOSU (İLK GİRİŞ EKRANI) */}
-          <div className="mx-auto w-20 h-20 flex items-center justify-center mb-4">
+        <div className="text-center mb-10">
+          {/* ŞİRKET LOGOSU (İLK GİRİŞ EKRANI - BÜYÜTÜLDÜ) */}
+          <div className="mx-auto flex items-center justify-center mb-6">
             <img 
               src="/spark.png" 
               alt="Spark Logo" 
-              className="h-20 w-20 object-contain"
+              className="h-32 w-auto sm:h-40 md:h-48 object-contain drop-shadow-sm"
               onError={(e) => {
-                // Eğer spark.png henüz public klasörüne yüklenmediyse kırık resim görünmesin diye fallback
                 e.currentTarget.style.display = 'none';
               }}
             />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Ship Performance Manager</h1>
-          <p className="text-muted-foreground mt-2">Lütfen giriş yapmak istediğiniz paneli seçin</p>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Ship Performance Manager</h1>
+          <p className="text-muted-foreground mt-3 text-lg">Lütfen giriş yapmak istediğiniz paneli seçin</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
           <Card 
-            className="hover:border-primary hover:bg-primary/5 cursor-pointer transition-all" 
+            className="hover:border-primary hover:bg-primary/5 cursor-pointer transition-all shadow-md hover:shadow-lg" 
             onClick={() => { setLoginPrompt("user"); setActiveTab("data-entry"); }}
           >
             <CardHeader className="text-center">
-              <div className="mx-auto bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                <Ship className="h-6 w-6 text-primary" />
+              <div className="mx-auto bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                <Ship className="h-8 w-8 text-primary" />
               </div>
-              <CardTitle>Gemi Girişi</CardTitle>
+              <CardTitle className="text-xl">Gemi Girişi</CardTitle>
             </CardHeader>
-            <CardContent className="text-center text-sm text-muted-foreground">
+            <CardContent className="text-center text-muted-foreground">
               Gemi personeli için veri giriş paneli
             </CardContent>
           </Card>
 
           <Card 
-            className="hover:border-destructive hover:bg-destructive/5 cursor-pointer transition-all" 
+            className="hover:border-destructive hover:bg-destructive/5 cursor-pointer transition-all shadow-md hover:shadow-lg" 
             onClick={() => { setLoginPrompt("admin"); setActiveTab("admin-dashboard"); }}
           >
             <CardHeader className="text-center">
-              <div className="mx-auto bg-destructive/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                <Shield className="h-6 w-6 text-destructive" />
+              <div className="mx-auto bg-destructive/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                <Shield className="h-8 w-8 text-destructive" />
               </div>
-              <CardTitle>Admin Paneli</CardTitle>
+              <CardTitle className="text-xl">Admin Paneli</CardTitle>
             </CardHeader>
-            <CardContent className="text-center text-sm text-muted-foreground">
+            <CardContent className="text-center text-muted-foreground">
               Ofis personeli için analiz ve raporlama
             </CardContent>
           </Card>
@@ -125,21 +124,21 @@ export function ShipPerformanceApp() {
       <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-3">
-              {/* ŞİRKET LOGOSU (SOL ÜST HEADER) */}
-              <div className="flex items-center justify-center">
+            <div className="flex items-center gap-4">
+              {/* ŞİRKET LOGOSU (SOL ÜST HEADER - BİRAZ BÜYÜTÜLDÜ) */}
+              <div className="flex items-center justify-center pl-1">
                 <img 
                   src="/spark.png" 
                   alt="Spark Logo" 
-                  className="h-9 w-9 object-contain" 
+                  className="h-10 w-auto md:h-12 object-contain" 
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                   }}
                 />
               </div>
               <div>
-                <h1 className="text-lg font-semibold">Ship Performance Manager</h1>
-                <p className="text-xs text-muted-foreground">
+                <h1 className="text-lg font-bold tracking-tight leading-tight">Ship Performance Manager</h1>
+                <p className="text-xs text-muted-foreground font-medium">
                   Voyage Data & Analytics
                 </p>
               </div>
@@ -215,6 +214,11 @@ export function ShipPerformanceApp() {
               <AuthModal
                 type="user"
                 onAuthenticate={() => setIsUserAuthenticated(true)}
+                onCancel={() => {
+                  setLoginPrompt("none");
+                  setIsUserAuthenticated(false);
+                  setIsAdminAuthenticated(false);
+                }}
               />
             )}
             <div className={needsUserAuth ? "blur-sm pointer-events-none select-none" : ""}>
@@ -230,6 +234,11 @@ export function ShipPerformanceApp() {
               <AuthModal
                 type="admin"
                 onAuthenticate={() => setIsAdminAuthenticated(true)}
+                onCancel={() => {
+                  setLoginPrompt("none");
+                  setIsUserAuthenticated(false);
+                  setIsAdminAuthenticated(false);
+                }}
               />
             )}
             <div className={needsAdminAuth ? "blur-sm pointer-events-none select-none" : ""}>
