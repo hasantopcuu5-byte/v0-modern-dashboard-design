@@ -6,7 +6,7 @@ import { ShipDataForm } from "./ship-data-form";
 import { AdminDashboard } from "./admin-dashboard";
 import { AuthModal } from "./auth-modal";
 import { ShipFormData, defaultFormData } from "@/lib/ship-data-types";
-import { Ship, LayoutDashboard, Anchor, LogOut, Shield } from "lucide-react";
+import { Ship, LayoutDashboard, LogOut, Shield } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,8 +53,17 @@ export function ShipPerformanceApp() {
         </div>
         
         <div className="text-center mb-8">
-          <div className="mx-auto bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-            <Anchor className="h-8 w-8 text-primary" />
+          {/* ŞİRKET LOGOSU (İLK GİRİŞ EKRANI) */}
+          <div className="mx-auto w-20 h-20 flex items-center justify-center mb-4">
+            <img 
+              src="/spark.png" 
+              alt="Spark Logo" 
+              className="h-20 w-20 object-contain"
+              onError={(e) => {
+                // Eğer spark.png henüz public klasörüne yüklenmediyse kırık resim görünmesin diye fallback
+                e.currentTarget.style.display = 'none';
+              }}
+            />
           </div>
           <h1 className="text-3xl font-bold tracking-tight">Ship Performance Manager</h1>
           <p className="text-muted-foreground mt-2">Lütfen giriş yapmak istediğiniz paneli seçin</p>
@@ -107,7 +116,6 @@ export function ShipPerformanceApp() {
     );
   }
 
-  // Check if current active tab requires authentication (kullanıcı paneller arası geçerse)
   const needsUserAuth = activeTab === "data-entry" && !isUserAuthenticated;
   const needsAdminAuth = activeTab === "admin-dashboard" && !isAdminAuthenticated;
 
@@ -118,8 +126,16 @@ export function ShipPerformanceApp() {
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Anchor className="h-6 w-6 text-primary" />
+              {/* ŞİRKET LOGOSU (SOL ÜST HEADER) */}
+              <div className="flex items-center justify-center">
+                <img 
+                  src="/spark.png" 
+                  alt="Spark Logo" 
+                  className="h-9 w-9 object-contain" 
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
               </div>
               <div>
                 <h1 className="text-lg font-semibold">Ship Performance Manager</h1>
