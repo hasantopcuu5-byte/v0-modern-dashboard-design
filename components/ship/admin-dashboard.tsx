@@ -115,6 +115,7 @@ function KPICard({
   unit,
   icon: Icon,
   showDifference = false,
+  valueColors,
 }: {
   title: string;
   ownerValue: number;
@@ -122,6 +123,7 @@ function KPICard({
   unit: string;
   icon: React.ElementType;
   showDifference?: boolean;
+  valueColors?: { owner?: string; charterer?: string };
 }) {
   const difference = ownerValue - chartererValue;
   const isNegative = difference < 0;
@@ -134,12 +136,12 @@ function KPICard({
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
             <div className="flex items-baseline gap-4">
               <div>
-                <p className="text-2xl font-bold">{ownerValue.toFixed(1)}</p>
+                <p className={`text-2xl font-bold ${valueColors?.owner || ""}`}>{ownerValue.toFixed(1)}</p>
                 <p className="text-xs text-muted-foreground">Owner</p>
               </div>
               <Separator orientation="vertical" className="h-10" />
               <div>
-                <p className="text-2xl font-bold text-muted-foreground">
+                <p className={`text-2xl font-bold ${valueColors?.charterer || "text-muted-foreground"}`}>
                   {chartererValue.toFixed(1)}
                 </p>
                 <p className="text-xs text-muted-foreground">Charterer</p>
@@ -213,7 +215,16 @@ function ROBTracker({
   const lsmgoRob =
     cospData.lsmgoInitial + formData.lsmgoSupply - totalLsmgoConsumedOwner;
 
-  const vlsfoDiff = totalVlsfoAllowed - totalVlsfoConsumedOwner;
+  // DYNAMIC C/P FUEL LIMIT CALCULATION
+  const cpFuelMatch = formData.charterpartyTerm.match(/Abt\s*([0-9.]+)\s*Mt/i);
+  const cpDailyFuelLimit = cpFuelMatch ? parseFloat(cpFuelMatch[1]) : 0;
+  
+  // Eğer listeden C/P seçildiyse (steaming time'a göre) orantıla, yoksa manuel Charterer değerini kullan
+  const cpVoyageLimitVlsfo = cpDailyFuelLimit > 0 
+    ? (cpDailyFuelLimit / 24) * formData.steamingTime 
+    : totalVlsfoAllowed;
+
+  const vlsfoDiff = cpVoyageLimitVlsfo - totalVlsfoConsumedOwner;
   const lsmgoDiff = totalLsmgoAllowed - totalLsmgoConsumedOwner;
 
   return (
@@ -255,23 +266,31 @@ function ROBTracker({
               </div>
             </div>
 
+            {/* VLSFO DIFFERENCE BOX */}
             <div
-              className={`p-3 rounded-lg ${
-                vlsfoDiff >= 0 ? "bg-green-500/10" : "bg-destructive/10"
+              className={`p-4 border-2 rounded-xl mt-4 ${
+                vlsfoDiff >= 0 
+                  ? "bg-green-500/10 border-green-500/30" 
+                  : "bg-destructive/10 border-destructive/30"
               }`}
             >
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">
-                  {vlsfoDiff >= 0 ? "Fuel Saving" : "Over Consumption"}
+              <div className="flex flex-col gap-1 text-center">
+                <span className="text-sm font-medium text-foreground">
+                  {vlsfoDiff >= 0 ? "Fuel Saving (vs Target)" : "Over Consumption (vs Target)"}
                 </span>
                 <span
-                  className={`text-lg font-bold ${
+                  className={`text-3xl font-black ${
                     vlsfoDiff >= 0 ? "text-green-500" : "text-destructive"
                   }`}
                 >
                   {vlsfoDiff >= 0 ? "+" : ""}
                   {vlsfoDiff.toFixed(1)} MT
                 </span>
+                {cpDailyFuelLimit > 0 && (
+                  <span className="text-xs text-muted-foreground mt-1">
+                    C/P Limit: <b>{cpVoyageLimitVlsfo.toFixed(1)} MT</b> based on {formData.steamingTime}h
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -343,6 +362,19 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
     formData.distanceCoveredCharterer / formData.steamingTime;
   const sogStwDiff =
     formData.distanceCoveredOwner - formData.distanceCoveredCharterer;
+
+  // DYNAMIC C/P SPEED LIMIT CALCULATION
+  const cpSpeedMatch = formData.charterpartyTerm.match(/Abt\s*([0-9.]+)\s*Kt/i);
+  const cpSpeedTarget = cpSpeedMatch ? parseFloat(cpSpeedMatch[1]) : 0;
+
+  // HIZ RENKLENDİRMESİ (Hedefi aşarsa Kırmızı, Altındaysa Yeşil)
+  const ownerSpeedColor = cpSpeedTarget > 0 
+    ? (avgSpeedOwner > cpSpeedTarget ? "text-destructive" : "text-green-500") 
+    : "";
+    
+  const chartererSpeedColor = cpSpeedTarget > 0 
+    ? (avgSpeedCharterer > cpSpeedTarget ? "text-destructive" : "text-green-500") 
+    : "text-muted-foreground";
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -439,11 +471,12 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
           icon={Compass}
         />
         <KPICard
-          title="Daily Avg Speed"
+          title={`Daily Avg Speed ${cpSpeedTarget > 0 ? `(Target: ${cpSpeedTarget} kts)` : ''}`}
           ownerValue={avgSpeedOwner}
           chartererValue={avgSpeedCharterer}
           unit="Knots"
           icon={Gauge}
+          valueColors={{ owner: ownerSpeedColor, charterer: chartererSpeedColor }}
         />
         <KPICard
           title="Daily Avg Speed STW"
@@ -739,7 +772,7 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
         </CardContent>
       </Card>
 
-      {/* NEW SECTION: DETAILED RAW DATA SEPARATED INTO CARDS */}
+      {/* DETAILED RAW DATA SEPARATED INTO CARDS */}
       <div className="space-y-6 pt-4 border-t border-border">
         <h3 className="text-lg font-semibold tracking-tight">Detailed Voyage Data</h3>
 
@@ -760,6 +793,10 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
               <div className="space-y-1">
                 <span className="text-muted-foreground text-xs">Date & Time</span>
                 <p className="font-medium">{new Date(formData.dateTime).toLocaleString()}</p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-muted-foreground text-xs">Steaming Time</span>
+                <p className="font-medium">{formData.steamingTime} hrs</p>
               </div>
               <div className="space-y-1">
                 <span className="text-muted-foreground text-xs">C/P Term</span>
