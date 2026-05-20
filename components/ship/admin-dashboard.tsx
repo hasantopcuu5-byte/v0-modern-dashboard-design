@@ -213,7 +213,16 @@ function ROBTracker({
   const lsmgoRob =
     cospData.lsmgoInitial + formData.lsmgoSupply - totalLsmgoConsumedOwner;
 
-  const vlsfoDiff = totalVlsfoAllowed - totalVlsfoConsumedOwner;
+  // DYNAMIC C/P LIMIT CALCULATION (Regex ile "Abt 40.6 Mt" içindeki sayıyı çeker)
+  const cpMatch = formData.charterpartyTerm.match(/Abt\s*([0-9.]+)\s*Mt/i);
+  const cpDailyLimit = cpMatch ? parseFloat(cpMatch[1]) : 0;
+  
+  // Eğer listeden bir C/P seçildiyse (steaming time'a göre) orantıla, yoksa manuel Charterer değerini kullan
+  const cpVoyageLimitVlsfo = cpDailyLimit > 0 
+    ? (cpDailyLimit / 24) * formData.steamingTime 
+    : totalVlsfoAllowed;
+
+  const vlsfoDiff = cpVoyageLimitVlsfo - totalVlsfoConsumedOwner;
   const lsmgoDiff = totalLsmgoAllowed - totalLsmgoConsumedOwner;
 
   return (
@@ -248,6 +257,12 @@ function ROBTracker({
                 <span>- Daily Consumption</span>
                 <span>-{totalVlsfoConsumedOwner.toFixed(1)} MT</span>
               </div>
+              {cpDailyLimit > 0 && (
+                <div className="flex justify-between text-muted-foreground text-xs bg-muted/30 px-2 py-1 rounded">
+                  <span>C/P Allowed ({formData.steamingTime}h)</span>
+                  <span>{cpVoyageLimitVlsfo.toFixed(1)} MT</span>
+                </div>
+              )}
               <Separator />
               <div className="flex justify-between font-medium">
                 <span>Current R.O.B.</span>
@@ -262,7 +277,7 @@ function ROBTracker({
             >
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">
-                  {vlsfoDiff >= 0 ? "Fuel Saving" : "Over Consumption"}
+                  {vlsfoDiff >= 0 ? "Fuel Saving (vs C/P)" : "Over Consumption (vs C/P)"}
                 </span>
                 <span
                   className={`text-lg font-bold ${
@@ -725,165 +740,3 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
           <div className="mt-4 flex flex-wrap justify-center gap-6">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded" style={{ backgroundColor: "#3b82f6" }} />
-              <span className="text-sm text-muted-foreground">Fresh Water: {formData.freshWater} m³</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded" style={{ backgroundColor: "#92400e" }} />
-              <span className="text-sm text-muted-foreground">Sludge: {formData.sludge} m³</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded" style={{ backgroundColor: "#dc2626" }} />
-              <span className="text-sm text-muted-foreground">Garbage: {formData.garbage} m³</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* NEW SECTION: DETAILED RAW DATA SEPARATED INTO CARDS */}
-      <div className="space-y-6 pt-4 border-t border-border">
-        <h3 className="text-lg font-semibold tracking-tight">Detailed Voyage Data</h3>
-
-        {/* 1. General Details Card */}
-        <Card>
-          <CardHeader className="pb-3 bg-muted/20 border-b">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Anchor className="h-4 w-4 text-primary" />
-              General Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-sm">
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">Operation</span>
-                <p className="font-medium capitalize"><Badge variant="outline">{formData.operation.replace('-', ' ')}</Badge></p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">Date & Time</span>
-                <p className="font-medium">{new Date(formData.dateTime).toLocaleString()}</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">C/P Term</span>
-                <p className="font-medium">{formData.charterpartyTerm || '-'}</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">Cargo Qty</span>
-                <p className="font-medium">{formData.cargoQuantity.toLocaleString()} MT</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">M/E Slip</span>
-                <p className="font-medium">{formData.meSlipPercent}%</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">Avr. RPM</span>
-                <p className="font-medium">{formData.avgRpm}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 2. Engine & Consumables Details Card */}
-        <Card>
-          <CardHeader className="pb-3 bg-muted/20 border-b">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Gauge className="h-4 w-4 text-primary" />
-              Engine & Consumables Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-sm">
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">EPL Status</span>
-                <p><Badge variant={formData.eplStatus ? "default" : "secondary"}>{formData.eplStatus ? "ON" : "OFF"}</Badge></p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">M/E Load / RHs</span>
-                <p className="font-medium">{formData.meLoadPercent}% <span className="text-muted-foreground mx-1">|</span> {formData.meDailyRunningHrs} hrs</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">DG Power / Boiler</span>
-                <p className="font-medium">{formData.dgTotalPowerKw} kW <span className="text-muted-foreground mx-1">|</span> {formData.boilerDailyHrs} hrs</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">M/E Cyl / Sys Oil</span>
-                <p className="font-medium">{formData.meCylOil} L <span className="text-muted-foreground mx-1">|</span> {formData.meSysOil} L</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">A/E Sys Oil</span>
-                <p className="font-medium">{formData.aeSysOil} L</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">Slop / Sewage</span>
-                <p className="font-medium">{formData.slop} m³ <span className="text-muted-foreground mx-1">|</span> {formData.sewage} m³</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 3. Weather Conditions Card */}
-        <Card>
-          <CardHeader className="pb-3 bg-muted/20 border-b">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <CloudSun className="h-4 w-4 text-primary" />
-              Weather Conditions
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="grid md:grid-cols-3 gap-6 text-sm">
-              <div className="space-y-2">
-                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider block">Owner Actual</span>
-                <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Wind</span>
-                    <span>{formData.weatherOwnerWind} kts</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Swell</span>
-                    <span>{formData.weatherOwnerSwell} m</span>
-                  </div>
-                  <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
-                    <Badge variant="outline" className="capitalize text-xs font-normal bg-background">{formData.weatherOwnerSeaState.replace('-', ' ')}</Badge>
-                    <span className="text-xs text-muted-foreground">Adv. Curr: {formData.weatherOwnerAdverseCurrent} kts</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider block">Charterer Allowed</span>
-                <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Wind</span>
-                    <span>{formData.weatherChartererWind} kts</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Swell</span>
-                    <span>{formData.weatherChartererSwell} m</span>
-                  </div>
-                  <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
-                    <Badge variant="outline" className="capitalize text-xs font-normal bg-background">{formData.weatherChartererSeaState.replace('-', ' ')}</Badge>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider block">Weather Routing</span>
-                <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Wind</span>
-                    <span>{formData.weatherRoutingWind} kts</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Swell</span>
-                    <span>{formData.weatherRoutingSwell} m</span>
-                  </div>
-                  <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
-                    <Badge variant="outline" className="capitalize text-xs font-normal bg-background">{formData.weatherRoutingSeaState.replace('-', ' ')}</Badge>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-}
