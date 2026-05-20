@@ -35,6 +35,9 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Trash2,
+  Anchor,
+  CloudSun,
+  Settings,
 } from "lucide-react";
 import { useCallback, useState } from "react";
 
