@@ -42,6 +42,19 @@ interface ShipDataFormProps {
   onExport: () => void;
 }
 
+// C/P Dropdown seçenekleri (Burayı kendi gemi profillerinize göre güncelleyebilirsiniz)
+const cpOptions = [
+  "Laden Abt 13.0 Kt / Abt 40.6 Mt",
+  "Laden Abt 12.6 Kt / Abt 48.5 Mt",
+  "Laden Abt 11.7 Kt / Abt 42.6 Mt",
+  "Laden Abt 10.8 Kt / Abt 34.8 Mt",
+  "Ballast Abt 13.5 Kt / Abt 38.5 Mt",
+  "Ballast Abt 12.6 Kt / Abt 46.5 Mt",
+  "Idle / Abt 3.0 Mt",
+  "Port Working / Abt 4.5 Mt",
+  "Time Charter"
+];
+
 function FormField({
   label,
   id,
@@ -249,12 +262,21 @@ export function ShipDataForm({
             <Label className="text-xs text-muted-foreground">
               Charterparty Term
             </Label>
-            <Input
-              type="text"
+            <Select
               value={formData.charterpartyTerm}
-              onChange={(e) => updateField("charterpartyTerm", e.target.value)}
-              className="h-9 text-sm"
-            />
+              onValueChange={(v) => updateField("charterpartyTerm", v)}
+            >
+              <SelectTrigger className="h-9 text-sm">
+                <SelectValue placeholder="Select C/P Term" />
+              </SelectTrigger>
+              <SelectContent>
+                {cpOptions.map((opt) => (
+                  <SelectItem key={opt} value={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <FormField
             label="Cargo/Ballast Qty"
@@ -580,7 +602,7 @@ export function ShipDataForm({
             id="slop"
             value={formData.slop}
             onChange={(v) => updateField("slop", parseFloat(v) || 0)}
-            unit="m3"
+            unit="m³"
             step="0.1"
           />
           <FormField
@@ -588,7 +610,7 @@ export function ShipDataForm({
             id="sludge"
             value={formData.sludge}
             onChange={(v) => updateField("sludge", parseFloat(v) || 0)}
-            unit="m3"
+            unit="m³"
             step="0.1"
           />
           <FormField
@@ -596,7 +618,7 @@ export function ShipDataForm({
             id="sewage"
             value={formData.sewage}
             onChange={(v) => updateField("sewage", parseFloat(v) || 0)}
-            unit="m3"
+            unit="m³"
             step="0.1"
           />
           <FormField
@@ -604,7 +626,7 @@ export function ShipDataForm({
             id="garbage"
             value={formData.garbage}
             onChange={(v) => updateField("garbage", parseFloat(v) || 0)}
-            unit="m3"
+            unit="m³"
             step="0.01"
           />
         </div>
