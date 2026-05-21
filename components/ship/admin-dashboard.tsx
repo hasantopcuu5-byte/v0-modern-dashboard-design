@@ -45,6 +45,38 @@ interface AdminDashboardProps {
   onImport: (data: ShipFormData) => void;
 }
 
+// CANAL vessel tank capacities (CBM)
+const VESSEL_CAPACITIES = {
+  freshWater: 445.4,
+  sludge: 60,
+  garbage: 8,
+};
+
+type FuelStatus = "green" | "grey" | "red";
+
+function fuelStatusStyle(status: FuelStatus) {
+  return {
+    box:
+      status === "green"
+        ? "bg-green-500/10 border-green-500/30"
+        : status === "red"
+        ? "bg-destructive/10 border-destructive/30"
+        : "bg-muted/50 border-border",
+    text:
+      status === "green"
+        ? "text-green-500"
+        : status === "red"
+        ? "text-destructive"
+        : "text-muted-foreground",
+  };
+}
+
+function fuelLabel(status: FuelStatus) {
+  if (status === "grey") return "Within Target (±5%)";
+  if (status === "green") return "Fuel Saving (vs Target)";
+  return "Over Consumption (vs Target)";
+}
+
 // Mock historical data for charts
 const generateHistoricalData = (currentData: ShipFormData) => {
   const days = 7;
@@ -227,6 +259,14 @@ function ROBTracker({
   const vlsfoDiff = cpVoyageLimitVlsfo - totalVlsfoConsumedOwner;
   const lsmgoDiff = totalLsmgoAllowed - totalLsmgoConsumedOwner;
 
+  // ±5% tolerance: grey zone
+  const vlsfoBase = cpDailyFuelLimit > 0 ? cpVoyageLimitVlsfo : totalVlsfoAllowed;
+  const vlsfoStatus: FuelStatus =
+    Math.abs(vlsfoDiff) <= vlsfoBase * 0.05 ? "grey" : vlsfoDiff > 0 ? "green" : "red";
+
+  const lsmgoStatus: FuelStatus =
+    Math.abs(lsmgoDiff) <= totalLsmgoAllowed * 0.05 ? "grey" : lsmgoDiff > 0 ? "green" : "red";
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -267,24 +307,13 @@ function ROBTracker({
             </div>
 
             {/* VLSFO DIFFERENCE BOX */}
-            <div
-              className={`p-4 border-2 rounded-xl mt-4 ${
-                vlsfoDiff >= 0 
-                  ? "bg-green-500/10 border-green-500/30" 
-                  : "bg-destructive/10 border-destructive/30"
-              }`}
-            >
+            <div className={`p-4 border-2 rounded-xl mt-4 ${fuelStatusStyle(vlsfoStatus).box}`}>
               <div className="flex flex-col gap-1 text-center">
                 <span className="text-sm font-medium text-foreground">
-                  {vlsfoDiff >= 0 ? "Fuel Saving (vs Target)" : "Over Consumption (vs Target)"}
+                  {fuelLabel(vlsfoStatus)}
                 </span>
-                <span
-                  className={`text-3xl font-black ${
-                    vlsfoDiff >= 0 ? "text-green-500" : "text-destructive"
-                  }`}
-                >
-                  {vlsfoDiff >= 0 ? "+" : ""}
-                  {vlsfoDiff.toFixed(1)} MT
+                <span className={`text-3xl font-black ${fuelStatusStyle(vlsfoStatus).text}`}>
+                  {vlsfoDiff > 0 ? "+" : ""}{vlsfoDiff.toFixed(1)} MT
                 </span>
                 {cpDailyFuelLimit > 0 && (
                   <span className="text-xs text-muted-foreground mt-1">
@@ -324,22 +353,16 @@ function ROBTracker({
               </div>
             </div>
 
-            <div
-              className={`p-3 rounded-lg ${
-                lsmgoDiff >= 0 ? "bg-green-500/10" : "bg-destructive/10"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">
-                  {lsmgoDiff >= 0 ? "Fuel Saving" : "Over Consumption"}
+            <div className={`p-4 border-2 rounded-xl mt-4 ${fuelStatusStyle(lsmgoStatus).box}`}>
+              <div className="flex flex-col gap-1 text-center">
+                <span className="text-sm font-medium text-foreground">
+                  {fuelLabel(lsmgoStatus)}
                 </span>
-                <span
-                  className={`text-lg font-bold ${
-                    lsmgoDiff >= 0 ? "text-green-500" : "text-destructive"
-                  }`}
-                >
-                  {lsmgoDiff >= 0 ? "+" : ""}
-                  {lsmgoDiff.toFixed(1)} MT
+                <span className={`text-3xl font-black ${fuelStatusStyle(lsmgoStatus).text}`}>
+                  {lsmgoDiff > 0 ? "+" : ""}{lsmgoDiff.toFixed(2)} MT
+                </span>
+                <span className="text-xs text-muted-foreground mt-1">
+                  Allowed: <b>{totalLsmgoAllowed.toFixed(2)} MT</b>
                 </span>
               </div>
             </div>
@@ -690,7 +713,7 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
         </Card>
       </div>
 
-      {/* Water, Sludge & Waste Chart */}
+      {/* Water, Sludge & Waste — Capacity Progress Bars */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -698,77 +721,121 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
             Fresh Water, Sludge & Garbage
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={[
-                  {
-                    name: "Fresh Water",
-                    value: formData.freshWater,
-                    fill: "#3b82f6",
-                  },
-                  {
-                    name: "Sludge",
-                    value: formData.sludge,
-                    fill: "#92400e",
-                  },
-                  {
-                    name: "Garbage",
-                    value: formData.garbage,
-                    fill: "#dc2626",
-                  },
-                ]}
-                layout="vertical"
-                margin={{ left: 20, right: 30 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis
-                  type="number"
-                  tick={{ fontSize: 12 }}
-                  className="text-muted-foreground"
-                  unit=" m³"
-                />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  tick={{ fontSize: 12 }}
-                  className="text-muted-foreground"
-                  width={100}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    borderColor: "hsl(var(--border))",
-                    borderRadius: "8px",
-                    color: "hsl(var(--card-foreground))",
-                  }}
-                  itemStyle={{ color: "hsl(var(--card-foreground))" }}
-                  labelStyle={{ color: "hsl(var(--card-foreground))" }}
-                  formatter={(value: number) => [`${value} m³`, "Miktar"]}
-                />
-                <Bar
-                  dataKey="value"
-                  radius={[0, 4, 4, 0]}
-                  barSize={40}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="mt-4 flex flex-wrap justify-center gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded" style={{ backgroundColor: "#3b82f6" }} />
-              <span className="text-sm text-muted-foreground">Fresh Water: {formData.freshWater} m³</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded" style={{ backgroundColor: "#92400e" }} />
-              <span className="text-sm text-muted-foreground">Sludge: {formData.sludge} m³</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded" style={{ backgroundColor: "#dc2626" }} />
-              <span className="text-sm text-muted-foreground">Garbage: {formData.garbage} m³</span>
-            </div>
-          </div>
+        <CardContent className="space-y-6 pt-4">
+
+          {/* Fresh Water */}
+          {(() => {
+            const pct = Math.min((formData.freshWater / VESSEL_CAPACITIES.freshWater) * 100, 100);
+            const barColor =
+              pct < 30 ? "bg-destructive" : pct < 55 ? "bg-amber-500" : "bg-blue-500";
+            const badgeColor =
+              pct < 30 ? "border-destructive text-destructive" : "border-muted-foreground text-muted-foreground";
+            return (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-blue-500 shrink-0" />
+                    <span className="font-medium">Fresh Water</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <span className="font-semibold text-foreground">{formData.freshWater.toFixed(1)}</span>
+                    <span>/</span>
+                    <span>{VESSEL_CAPACITIES.freshWater} CBM</span>
+                    <Badge variant="outline" className={`text-xs ${badgeColor}`}>
+                      {pct.toFixed(1)}%
+                    </Badge>
+                  </div>
+                </div>
+                <div className="w-full bg-muted rounded-full h-4 overflow-hidden">
+                  <div
+                    className={`h-4 rounded-full transition-all duration-500 ${barColor}`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {pct < 30 ? "⚠ Low level — consider bunkering fresh water" : pct < 55 ? "Moderate level" : "Good level"}
+                </p>
+              </div>
+            );
+          })()}
+
+          {/* Sludge */}
+          {(() => {
+            const pct = Math.min((formData.sludge / VESSEL_CAPACITIES.sludge) * 100, 100);
+            const barColor =
+              pct > 80 ? "bg-destructive" : pct > 60 ? "bg-amber-500" : "bg-amber-800";
+            const badgeColor =
+              pct > 80 ? "border-destructive text-destructive" :
+              pct > 60 ? "border-amber-500 text-amber-600" : "border-muted-foreground text-muted-foreground";
+            return (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-amber-800 shrink-0" />
+                    <span className="font-medium">Sludge Tank</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <span className="font-semibold text-foreground">{formData.sludge.toFixed(1)}</span>
+                    <span>/</span>
+                    <span>{VESSEL_CAPACITIES.sludge} CBM</span>
+                    <Badge variant="outline" className={`text-xs ${badgeColor}`}>
+                      {pct.toFixed(1)}%
+                    </Badge>
+                  </div>
+                </div>
+                <div className="w-full bg-muted rounded-full h-4 overflow-hidden">
+                  <div
+                    className={`h-4 rounded-full transition-all duration-500 ${barColor}`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {pct > 80 ? "⚠ High — arrange discharge at next port" : pct > 60 ? "Getting full — monitor closely" : "Normal level"}
+                </p>
+              </div>
+            );
+          })()}
+
+          {/* Garbage */}
+          {(() => {
+            const pct = Math.min((formData.garbage / VESSEL_CAPACITIES.garbage) * 100, 100);
+            const barColor =
+              pct > 80 ? "bg-destructive" : pct > 60 ? "bg-amber-500" : "bg-red-700";
+            const badgeColor =
+              pct > 80 ? "border-destructive text-destructive" :
+              pct > 60 ? "border-amber-500 text-amber-600" : "border-muted-foreground text-muted-foreground";
+            return (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-700 shrink-0" />
+                    <span className="font-medium">Garbage</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <span className="font-semibold text-foreground">{formData.garbage.toFixed(2)}</span>
+                    <span>/</span>
+                    <span>{VESSEL_CAPACITIES.garbage} CBM</span>
+                    <Badge variant="outline" className={`text-xs ${badgeColor}`}>
+                      {pct.toFixed(1)}%
+                    </Badge>
+                  </div>
+                </div>
+                <div className="w-full bg-muted rounded-full h-4 overflow-hidden">
+                  <div
+                    className={`h-4 rounded-full transition-all duration-500 ${barColor}`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {pct > 80 ? "⚠ Almost full — dispose at next port" : pct > 60 ? "Getting full" : "Normal level"}
+                </p>
+              </div>
+            );
+          })()}
+
+          <p className="text-xs text-muted-foreground pt-1 border-t border-border">
+            Vessel: <span className="font-medium text-foreground">CANAL</span> — FW Tank: {VESSEL_CAPACITIES.freshWater} CBM · Sludge Tank: {VESSEL_CAPACITIES.sludge} CBM · Garbage: {VESSEL_CAPACITIES.garbage} CBM
+          </p>
         </CardContent>
       </Card>
 
