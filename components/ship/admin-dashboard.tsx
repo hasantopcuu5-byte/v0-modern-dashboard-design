@@ -1,3 +1,11 @@
+İstediğiniz düzenlemeleri yapmak için `components/ship/admin-dashboard.tsx` dosyasını güncellemeliyiz.
+
+1. **"General Details"** kartını sayfanın (veya bölümün) en üstüne aldım.
+2. **LSMGO** kutusunun altındaki detay yazısını ve ondalık formatlarını ( `toFixed(1)` gibi) **VLSFO** kutusuna benzeyecek şekilde aynı yapıya getirdim.
+
+Aşağıdaki güncellenmiş kodu `components/ship/admin-dashboard.tsx` dosyanızın içeriği ile tamamen değiştirebilirsiniz:
+
+```tsx
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -353,17 +361,20 @@ function ROBTracker({
               </div>
             </div>
 
+            {/* LSMGO DIFFERENCE BOX - Tasarımı VLSFO'ya benzetildi */}
             <div className={`p-4 border-2 rounded-xl mt-4 ${fuelStatusStyle(lsmgoStatus).box}`}>
               <div className="flex flex-col gap-1 text-center">
                 <span className="text-sm font-medium text-foreground">
                   {fuelLabel(lsmgoStatus)}
                 </span>
                 <span className={`text-3xl font-black ${fuelStatusStyle(lsmgoStatus).text}`}>
-                  {lsmgoDiff > 0 ? "+" : ""}{lsmgoDiff.toFixed(2)} MT
+                  {lsmgoDiff > 0 ? "+" : ""}{lsmgoDiff.toFixed(1)} MT
                 </span>
-                <span className="text-xs text-muted-foreground mt-1">
-                  Allowed: <b>{totalLsmgoAllowed.toFixed(2)} MT</b>
-                </span>
+                {totalLsmgoAllowed > 0 && (
+                  <span className="text-xs text-muted-foreground mt-1">
+                    Allowed: <b>{totalLsmgoAllowed.toFixed(1)} MT</b>
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -448,6 +459,48 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
 
   return (
     <div className="space-y-6">
+      {/* 1. General Details Card (En Üste Taşındı) */}
+      <Card>
+        <CardHeader className="pb-3 bg-muted/20 border-b">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Anchor className="h-4 w-4 text-primary" />
+            General Details
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-sm">
+            <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">Operation</span>
+              <p className="font-medium capitalize"><Badge variant="outline">{formData.operation.replace('-', ' ')}</Badge></p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">Date & Time</span>
+              <p className="font-medium">{new Date(formData.dateTime).toLocaleString()}</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">Steaming Time</span>
+              <p className="font-medium">{formData.steamingTime} hrs</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">C/P Term</span>
+              <p className="font-medium">{formData.charterpartyTerm || '-'}</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">Cargo Qty</span>
+              <p className="font-medium">{formData.cargoQuantity.toLocaleString()} MT</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">M/E Slip</span>
+              <p className="font-medium">{formData.meSlipPercent}%</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">Avr. RPM</span>
+              <p className="font-medium">{formData.avgRpm}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Import Zone */}
       <Card
         className={`border-2 border-dashed transition-colors ${
@@ -843,48 +896,6 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
       <div className="space-y-6 pt-4 border-t border-border">
         <h3 className="text-lg font-semibold tracking-tight">Detailed Voyage Data</h3>
 
-        {/* 1. General Details Card */}
-        <Card>
-          <CardHeader className="pb-3 bg-muted/20 border-b">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Anchor className="h-4 w-4 text-primary" />
-              General Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-sm">
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">Operation</span>
-                <p className="font-medium capitalize"><Badge variant="outline">{formData.operation.replace('-', ' ')}</Badge></p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">Date & Time</span>
-                <p className="font-medium">{new Date(formData.dateTime).toLocaleString()}</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">Steaming Time</span>
-                <p className="font-medium">{formData.steamingTime} hrs</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">C/P Term</span>
-                <p className="font-medium">{formData.charterpartyTerm || '-'}</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">Cargo Qty</span>
-                <p className="font-medium">{formData.cargoQuantity.toLocaleString()} MT</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">M/E Slip</span>
-                <p className="font-medium">{formData.meSlipPercent}%</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-muted-foreground text-xs">Avr. RPM</span>
-                <p className="font-medium">{formData.avgRpm}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* 2. Engine & Consumables Details Card */}
         <Card>
           <CardHeader className="pb-3 bg-muted/20 border-b">
@@ -991,3 +1002,5 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
     </div>
   );
 }
+
+```
