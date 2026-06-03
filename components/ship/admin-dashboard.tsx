@@ -1,12 +1,4 @@
-İstediğiniz düzenlemeleri yapmak için `components/ship/admin-dashboard.tsx` dosyasını güncellemeliyiz.
 
-1. **"General Details"** kartını sayfanın (veya bölümün) en üstüne aldım.
-2. **LSMGO** kutusunun altındaki detay yazısını ve ondalık formatlarını ( `toFixed(1)` gibi) **VLSFO** kutusuna benzeyecek şekilde aynı yapıya getirdim.
-
-Aşağıdaki güncellenmiş kodu `components/ship/admin-dashboard.tsx` dosyanızın içeriği ile tamamen değiştirebilirsiniz:
-
-```tsx
-"use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
