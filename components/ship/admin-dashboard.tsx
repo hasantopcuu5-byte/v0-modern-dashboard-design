@@ -599,17 +599,6 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     domain={["auto", "auto"]}
                     className="text-muted-foreground"
                   />
-                  <Tooltip
-                    wrapperStyle={{ zIndex: 100 }}
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      borderColor: "hsl(var(--border))",
-                      borderRadius: "8px",
-                      color: "hsl(var(--card-foreground))",
-                    }}
-                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
-                    labelStyle={{ color: "hsl(var(--card-foreground))" }}
-                  />
                   <Legend />
                   <Line
                     type="monotone"
@@ -626,6 +615,20 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     stroke="hsl(var(--accent))"
                     strokeWidth={2}
                     dot={{ r: 3 }}
+                  />
+                  {/* Tooltip EN ALTTA ve zIndex: 9999 ile! */}
+                  <Tooltip
+                    wrapperStyle={{ zIndex: 9999 }}
+                    contentStyle={{
+                      zIndex: 9999,
+                      backgroundColor: "hsl(var(--card))",
+                      borderColor: "hsl(var(--border))",
+                      borderRadius: "8px",
+                      color: "hsl(var(--card-foreground))",
+                      boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
+                    }}
+                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
+                    labelStyle={{ color: "hsl(var(--card-foreground))", fontWeight: "bold", marginBottom: "4px" }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -655,18 +658,6 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     tick={{ fontSize: 12 }}
                     className="text-muted-foreground"
                   />
-                  <Tooltip
-                    wrapperStyle={{ zIndex: 100 }}
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      borderColor: "hsl(var(--border))",
-                      borderRadius: "8px",
-                      color: "hsl(var(--card-foreground))",
-                    }}
-                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
-                    labelStyle={{ color: "hsl(var(--card-foreground))" }}
-                    formatter={(value: number) => [`${value} MT`, "Miktar"]}
-                  />
                   <Legend />
                   <Bar
                     dataKey="vlsfoOwner"
@@ -679,6 +670,21 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     name="VLSFO Charterer"
                     fill="hsl(var(--accent))"
                     radius={[4, 4, 0, 0]}
+                  />
+                  {/* Tooltip EN ALTTA ve zIndex: 9999 ile! */}
+                  <Tooltip
+                    wrapperStyle={{ zIndex: 9999 }}
+                    contentStyle={{
+                      zIndex: 9999,
+                      backgroundColor: "hsl(var(--card))",
+                      borderColor: "hsl(var(--border))",
+                      borderRadius: "8px",
+                      color: "hsl(var(--card-foreground))",
+                      boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
+                    }}
+                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
+                    labelStyle={{ color: "hsl(var(--card-foreground))", fontWeight: "bold", marginBottom: "4px" }}
+                    formatter={(value: number) => [`${value} MT`, "Miktar"]}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -715,17 +721,6 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     tick={{ fontSize: 12 }}
                     className="text-muted-foreground"
                   />
-                  <Tooltip
-                    wrapperStyle={{ zIndex: 100 }}
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      borderColor: "hsl(var(--border))",
-                      borderRadius: "8px",
-                      color: "hsl(var(--card-foreground))",
-                    }}
-                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
-                    labelStyle={{ color: "hsl(var(--card-foreground))" }}
-                  />
                   <Legend />
                   <Area
                     yAxisId="left"
@@ -753,6 +748,20 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     stroke="hsl(var(--destructive))"
                     strokeWidth={2}
                     dot={{ r: 4 }}
+                  />
+                  {/* Tooltip EN ALTTA ve zIndex: 9999 ile! */}
+                  <Tooltip
+                    wrapperStyle={{ zIndex: 9999 }}
+                    contentStyle={{
+                      zIndex: 9999,
+                      backgroundColor: "hsl(var(--card))",
+                      borderColor: "hsl(var(--border))",
+                      borderRadius: "8px",
+                      color: "hsl(var(--card-foreground))",
+                      boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
+                    }}
+                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
+                    labelStyle={{ color: "hsl(var(--card-foreground))", fontWeight: "bold", marginBottom: "4px" }}
                   />
                 </ComposedChart>
               </ResponsiveContainer>
