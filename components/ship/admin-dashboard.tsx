@@ -775,27 +775,6 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
             Fresh Water, Sludge & Garbage
           </CardTitle>
         </CardHeader>
-        {/* Barlar olmadan eklenen Slop, Sewage ve Bilge değerleri */}
-          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border">
-            <div className="space-y-1">
-              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                <Droplet className="h-3 w-3" /> Slop Tank
-              </span>
-              <p className="text-sm font-semibold">{formData.slop?.toFixed(1) || 0} m³</p>
-            </div>
-            <div className="space-y-1">
-              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                <Droplet className="h-3 w-3" /> Sewage
-              </span>
-              <p className="text-sm font-semibold">{formData.sewage?.toFixed(1) || 0} m³</p>
-            </div>
-            <div className="space-y-1">
-              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                <Droplet className="h-3 w-3" /> Bilge
-              </span>
-              <p className="text-sm font-semibold">{formData.bilge?.toFixed(1) || 0} m³</p>
-            </div>
-          </div>
         <CardContent className="space-y-6 pt-4">
 
           {/* Fresh Water */}
@@ -907,7 +886,47 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
               </div>
             );
           })()}
+{/* Slop */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-slate-500 shrink-0" />
+                <span className="font-medium">Slop Tank</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <span className="font-semibold text-foreground">{formData.slop?.toFixed(1) || 0}</span>
+                <span>m³</span>
+              </div>
+            </div>
+          </div>
 
+          {/* Sewage */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-stone-500 shrink-0" />
+                <span className="font-medium">Sewage</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <span className="font-semibold text-foreground">{formData.sewage?.toFixed(1) || 0}</span>
+                <span>m³</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Bilge */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-cyan-600 shrink-0" />
+                <span className="font-medium">Bilge</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <span className="font-semibold text-foreground">{formData.bilge?.toFixed(1) || 0}</span>
+                <span>m³</span>
+              </div>
+            </div>
+          </div>
           <p className="text-xs text-muted-foreground pt-1 border-t border-border">
             Vessel: <span className="font-medium text-foreground">CANAL</span> — FW Tank: {VESSEL_CAPACITIES.freshWater} CBM · Sludge Tank: {VESSEL_CAPACITIES.sludge} CBM · Garbage: {VESSEL_CAPACITIES.garbage} CBM
           </p>
