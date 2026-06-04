@@ -1070,5 +1070,4 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
   );
 }
         
-  );
-}
+
