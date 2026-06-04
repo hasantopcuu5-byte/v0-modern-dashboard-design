@@ -1,5 +1,4 @@
 export interface ShipFormData {
-  // General Voyage & Distance
   operation: string;
   dateTime: string;
   steamingTime: number;
