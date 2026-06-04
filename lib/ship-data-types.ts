@@ -43,6 +43,7 @@ export interface ShipFormData {
   slop: number;
   sludge: number;
   sewage: number;
+  bilge: number;
   freshWater: number;
   garbage: number;
 
@@ -109,6 +110,7 @@ export const defaultFormData: ShipFormData = {
   slop: 0.2,
   sludge: 0.5,
   sewage: 1.2,
+  bilge: 0.8,
   freshWater: 8,
   garbage: 0.3,
   vlsfoSupply: 0,
