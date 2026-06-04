@@ -11,6 +11,10 @@ export interface ShipFormData {
   meSlipPercent: number;
   charterpartyTerm: string;
   cargoQuantity: number;
+  export interface ShipFormData 
+  cargo?: string;
+  dailyLogDistance?: number;
+}
 
   // Engine & Generator Running Hours
   meLoadPercent: number;
