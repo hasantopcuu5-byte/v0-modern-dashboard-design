@@ -842,7 +842,7 @@ export function ShipDataForm({
           </Label>
           <Textarea
             id="remarks"
-            placeholder="Enter any additional notes, events, or remarks for today..."
+            placeholder="Enter additional notes if any..."
             value={formData.remarks || ""}
             onChange={(e) => updateField("remarks", e.target.value)}
             className="min-h-[120px] text-sm resize-y"
