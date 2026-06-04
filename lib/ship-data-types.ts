@@ -62,6 +62,7 @@ export interface ShipFormData {
   weatherRoutingWind: number;
   weatherRoutingSwell: number;
   weatherRoutingSeaState: string;
+  remarks?: string;
 }
 
 export interface CospData {
@@ -125,6 +126,7 @@ export const defaultFormData: ShipFormData = {
   weatherRoutingWind: 12,
   weatherRoutingSwell: 1.5,
   weatherRoutingSeaState: "slight",
+  remarks: "",
 };
 
 export const defaultCospData: CospData = {
