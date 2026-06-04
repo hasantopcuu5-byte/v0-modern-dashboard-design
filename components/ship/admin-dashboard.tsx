@@ -974,8 +974,7 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
             </div>
           </CardContent>
         </Card>
-
-        {/* 3. Weather Conditions Card */}
+{/* 3. Weather Conditions Card */}
         <Card>
           <CardHeader className="pb-3 bg-muted/20 border-b">
             <CardTitle className="flex items-center gap-2 text-base">
@@ -985,7 +984,49 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
           </CardHeader>
           <CardContent className="pt-6">
             <div className="grid md:grid-cols-3 gap-6 text-sm">
-             <div className="space-y-2">
+              {/* Owner Actual */}
+              <div className="space-y-2">
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider block">Owner Actual</span>
+                <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Wind</span>
+                    <span className={`font-semibold ${getWindColor(formData.weatherOwnerWind)}`}>{formData.weatherOwnerWind} bft</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Swell</span>
+                    <span>{formData.weatherOwnerSwell} m</span>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
+                    <Badge variant="outline" className={`capitalize text-xs font-normal bg-background ${getSeaStateColor(formData.weatherOwnerSeaState)}`}>
+                      {formData.weatherOwnerSeaState.replace('-', ' ')}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">Adv. Curr: {formData.weatherOwnerAdverseCurrent} kts</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Charterer Allowed */}
+              <div className="space-y-2">
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider block">Charterer Allowed</span>
+                <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Wind</span>
+                    <span className={`font-semibold ${getWindColor(formData.weatherChartererWind)}`}>{formData.weatherChartererWind} bft</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Swell</span>
+                    <span>{formData.weatherChartererSwell} m</span>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
+                    <Badge variant="outline" className={`capitalize text-xs font-normal bg-background ${getSeaStateColor(formData.weatherChartererSeaState)}`}>
+                      {formData.weatherChartererSeaState.replace('-', ' ')}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Weather Routing */}
+              <div className="space-y-2">
                 <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider block">Weather Routing</span>
                 <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
                   <div className="flex justify-between items-center">
@@ -997,7 +1038,9 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     <span>{formData.weatherRoutingSwell} m</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
-                    <Badge variant="outline" className={`capitalize text-xs font-normal bg-background ${getSeaStateColor(formData.weatherRoutingSeaState)}`}>{formData.weatherRoutingSeaState.replace('-', ' ')}</Badge>
+                    <Badge variant="outline" className={`capitalize text-xs font-normal bg-background ${getSeaStateColor(formData.weatherRoutingSeaState)}`}>
+                      {formData.weatherRoutingSeaState.replace('-', ' ')}
+                    </Badge>
                   </div>
                 </div>
               </div>
@@ -1026,5 +1069,6 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
     </div>
   );
 }
+        
   );
 }
