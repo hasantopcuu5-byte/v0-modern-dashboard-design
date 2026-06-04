@@ -138,7 +138,18 @@ const generateHistoricalData = (currentData: ShipFormData) => {
 
   return data;
 };
+// Hava durumu için renk belirleyici fonksiyonlar
+function getWindColor(wind: number) {
+  if (wind <= 3) return "text-green-500";
+  if (wind <= 5) return "text-amber-500";
+  return "text-destructive";
+}
 
+function getSeaStateColor(state: string) {
+  if (["calm", "slight"].includes(state)) return "text-green-500 border-green-500/30 bg-green-500/10";
+  if (["moderate"].includes(state)) return "text-amber-500 border-amber-500/30 bg-amber-500/10";
+  return "text-destructive border-destructive/30 bg-destructive/10";
+}
 function KPICard({
   title,
   ownerValue,
@@ -978,14 +989,14 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                 <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Wind</span>
-                    <span>{formData.weatherOwnerWind} kts</span>
+                    <span className={`font-semibold ${getWindColor(formData.weatherOwnerWind)}`}>{formData.weatherOwnerWind} bft</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Swell</span>
                     <span>{formData.weatherOwnerSwell} m</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
-                    <Badge variant="outline" className="capitalize text-xs font-normal bg-background">{formData.weatherOwnerSeaState.replace('-', ' ')}</Badge>
+                    <Badge variant="outline" className={`capitalize text-xs font-normal bg-background ${getSeaStateColor(formData.weatherOwnerSeaState)}`}>{formData.weatherOwnerSeaState.replace('-', ' ')}</Badge>
                     <span className="text-xs text-muted-foreground">Adv. Curr: {formData.weatherOwnerAdverseCurrent} kts</span>
                   </div>
                 </div>
@@ -996,14 +1007,14 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                 <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Wind</span>
-                    <span>{formData.weatherChartererWind} kts</span>
+                    <span className={`font-semibold ${getWindColor(formData.weatherChartererWind)}`}>{formData.weatherChartererWind} bft</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Swell</span>
                     <span>{formData.weatherChartererSwell} m</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
-                    <Badge variant="outline" className="capitalize text-xs font-normal bg-background">{formData.weatherChartererSeaState.replace('-', ' ')}</Badge>
+                    <Badge variant="outline" className={`capitalize text-xs font-normal bg-background ${getSeaStateColor(formData.weatherChartererSeaState)}`}>{formData.weatherChartererSeaState.replace('-', ' ')}</Badge>
                   </div>
                 </div>
               </div>
@@ -1013,14 +1024,14 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                 <div className="bg-muted/40 border p-3 rounded-lg space-y-1">
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Wind</span>
-                    <span>{formData.weatherRoutingWind} kts</span>
+                    <span className={`font-semibold ${getWindColor(formData.weatherRoutingWind)}`}>{formData.weatherRoutingWind} bft</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Swell</span>
                     <span>{formData.weatherRoutingSwell} m</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 mt-2 border-t border-border">
-                    <Badge variant="outline" className="capitalize text-xs font-normal bg-background">{formData.weatherRoutingSeaState.replace('-', ' ')}</Badge>
+                    <Badge variant="outline" className={`capitalize text-xs font-normal bg-background ${getSeaStateColor(formData.weatherRoutingSeaState)}`}>{formData.weatherRoutingSeaState.replace('-', ' ')}</Badge>
                   </div>
                 </div>
               </div>
