@@ -62,8 +62,6 @@ export interface ShipFormData {
   weatherRoutingWind: number;
   weatherRoutingSwell: number;
   weatherRoutingSeaState: string;
-
-  remarks?: string; // YENİ EKLENEN KAPTAN NOTU ALANI
 }
 
 export interface CospData {
@@ -117,17 +115,16 @@ export const defaultFormData: ShipFormData = {
   garbage: 0.3,
   vlsfoSupply: 0,
   lsmgoSupply: 0,
-  weatherOwnerWind: 4, // Bft değerine uygun varsayılan
+  weatherOwnerWind: 15,
   weatherOwnerSwell: 2.0,
   weatherOwnerSeaState: "moderate",
   weatherOwnerAdverseCurrent: -0.5,
-  weatherChartererWind: 4,
+  weatherChartererWind: 15,
   weatherChartererSwell: 2.0,
   weatherChartererSeaState: "moderate",
-  weatherRoutingWind: 3,
+  weatherRoutingWind: 12,
   weatherRoutingSwell: 1.5,
   weatherRoutingSeaState: "slight",
-  remarks: "",
 };
 
 export const defaultCospData: CospData = {
