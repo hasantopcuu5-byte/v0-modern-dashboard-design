@@ -1,5 +1,5 @@
 "use client";
-
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -684,7 +684,7 @@ export function ShipDataForm({
                   onChange={(v) =>
                     updateField("weatherOwnerWind", parseFloat(v) || 0)
                   }
-                  unit="kts"
+                  unit="bft"
                 />
                 <FormField
                   label="Swell"
@@ -744,7 +744,7 @@ export function ShipDataForm({
                   onChange={(v) =>
                     updateField("weatherChartererWind", parseFloat(v) || 0)
                   }
-                  unit="kts"
+                  unit="bft"
                 />
                 <FormField
                   label="Swell"
@@ -794,7 +794,7 @@ export function ShipDataForm({
                   onChange={(v) =>
                     updateField("weatherRoutingWind", parseFloat(v) || 0)
                   }
-                  unit="kts"
+                  unit="bft"
                 />
                 <FormField
                   label="Swell"
@@ -833,7 +833,21 @@ export function ShipDataForm({
           </div>
         </div>
       </CollapsibleCard>
-
+{/* Card 6: Ship's Additional Remarks */}
+      <CollapsibleCard title="Ship's Additional Remarks" icon={FileText}>
+        <div className="space-y-2 pt-2">
+          <Label htmlFor="remarks" className="text-xs text-muted-foreground">
+            Captain's Note / Daily Remarks
+          </Label>
+          <Textarea
+            id="remarks"
+            placeholder="Enter any additional notes, events, or remarks for today..."
+            value={formData.remarks || ""}
+            onChange={(e) => updateField("remarks", e.target.value)}
+            className="min-h-[120px] text-sm resize-y"
+          />
+        </div>
+      </CollapsibleCard>
       {/* Export Button */}
       <div className="flex justify-end pt-4">
         <Button onClick={onExport} size="lg" className="gap-2">
