@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -33,6 +34,7 @@ import {
   ChevronDown,
   Download,
   AlertTriangle,
+  FileText,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -42,7 +44,6 @@ interface ShipDataFormProps {
   onExport: () => void;
 }
 
-// C/P Dropdown seçenekleri (Burayı kendi gemi profillerinize göre güncelleyebilirsiniz)
 const cpOptions = [
   "Laden Abt 13.0 Kt / Abt 40.6 Mt",
   "Laden Abt 12.6 Kt / Abt 48.5 Mt",
@@ -179,6 +180,18 @@ export function ShipDataForm({
               </SelectContent>
             </Select>
           </div>
+          
+          <div className="space-y-1.5">
+            <Label htmlFor="cargo" className="text-xs text-muted-foreground">Cargo Type</Label>
+            <Input
+              id="cargo"
+              value={formData.cargo}
+              onChange={(e) => updateField("cargo", e.target.value)}
+              className="h-9 text-sm"
+              placeholder="e.g. Grain"
+            />
+          </div>
+
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Date & Time</Label>
             <Input
@@ -188,19 +201,13 @@ export function ShipDataForm({
               className="h-9 text-sm"
             />
           </div>
+          
           <FormField
             label="Steaming Time"
             id="steamingTime"
             value={formData.steamingTime}
             onChange={(v) => updateField("steamingTime", parseFloat(v) || 0)}
             unit="hrs"
-          />
-          <FormField
-            label="Avr. RPM"
-            id="avgRpm"
-            value={formData.avgRpm}
-            onChange={(v) => updateField("avgRpm", parseFloat(v) || 0)}
-            unit="rpm"
           />
         </div>
 
@@ -247,16 +254,23 @@ export function ShipDataForm({
 
         <Separator className="my-4" />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <FormField
-            label="Daily Log Distance (Owner)"
-            id="dailyLogDistanceOwner"
-            value={formData.dailyLogDistanceOwner}
+            label="Daily Log Distance"
+            id="dailyLogDistance"
+            value={formData.dailyLogDistance}
             onChange={(v) =>
-              updateField("dailyLogDistanceOwner", parseFloat(v) || 0)
+              updateField("dailyLogDistance", parseFloat(v) || 0)
             }
             unit="nm"
             step="0.1"
+          />
+          <FormField
+            label="Avr. RPM"
+            id="avgRpm"
+            value={formData.avgRpm}
+            onChange={(v) => updateField("avgRpm", parseFloat(v) || 0)}
+            unit="rpm"
           />
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">
@@ -596,7 +610,7 @@ export function ShipDataForm({
 
         <Separator className="my-4" />
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4"> {/* md:grid-cols-5 olarak değiştirdik */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <FormField
             label="Slop"
             id="slop"
@@ -621,7 +635,6 @@ export function ShipDataForm({
             unit="m³"
             step="0.1"
           />
-          {/* YENİ EKLENEN BILGE ALANI */}
           <FormField
             label="Bilge"
             id="bilge"
@@ -684,7 +697,7 @@ export function ShipDataForm({
                   onChange={(v) =>
                     updateField("weatherOwnerWind", parseFloat(v) || 0)
                   }
-                  unit="kts"
+                  unit="bft"
                 />
                 <FormField
                   label="Swell"
@@ -744,7 +757,7 @@ export function ShipDataForm({
                   onChange={(v) =>
                     updateField("weatherChartererWind", parseFloat(v) || 0)
                   }
-                  unit="kts"
+                  unit="bft"
                 />
                 <FormField
                   label="Swell"
@@ -794,7 +807,7 @@ export function ShipDataForm({
                   onChange={(v) =>
                     updateField("weatherRoutingWind", parseFloat(v) || 0)
                   }
-                  unit="kts"
+                  unit="bft"
                 />
                 <FormField
                   label="Swell"
@@ -820,27 +833,4 @@ export function ShipDataForm({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {seaStateOptions.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CollapsibleCard>
-
-      {/* Export Button */}
-      <div className="flex justify-end pt-4">
-        <Button onClick={onExport} size="lg" className="gap-2">
-          <Download className="h-4 w-4" />
-          Save & Export as JSON
-        </Button>
-      </div>
-    </div>
-  );
-}
+                      {seaStateOptions.
