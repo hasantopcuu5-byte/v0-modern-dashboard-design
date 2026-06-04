@@ -644,51 +644,48 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
               Fuel Consumption Comparison
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData.slice(-5)}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                  <XAxis
-                    dataKey="date"
-                    tick={{ fontSize: 12 }}
-                    className="text-muted-foreground"
-                  />
-                  <YAxis
-                    tick={{ fontSize: 12 }}
-                    className="text-muted-foreground"
-                  />
-                  <Legend />
-                  <Bar
-                    dataKey="vlsfoOwner"
-                    name="VLSFO Owner"
-                    fill="hsl(var(--primary))"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar
-                    dataKey="vlsfoCharterer"
-                    name="VLSFO Charterer"
-                    fill="hsl(var(--accent))"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  {/* Tooltip EN ALTTA ve zIndex: 9999 ile! */}
-                  <Tooltip
-                    wrapperStyle={{ zIndex: 9999 }}
-                    contentStyle={{
-                      zIndex: 9999,
-                      backgroundColor: "hsl(var(--card))",
-                      borderColor: "hsl(var(--border))",
-                      borderRadius: "8px",
-                      color: "hsl(var(--card-foreground))",
-                      boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
-                    }}
-                    itemStyle={{ color: "hsl(var(--card-foreground))" }}
-                    labelStyle={{ color: "hsl(var(--card-foreground))", fontWeight: "bold", marginBottom: "4px" }}
-                    formatter={(value: number) => [`${value} MT`, "Miktar"]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+         <CardContent>
+            {(() => {
+              // Son 5 günü al ve barların oranını hesaplamak için en yüksek değeri bul
+              const last5Days = chartData.slice(-5);
+              const maxFuel = Math.max(...last5Days.flatMap(d => [d.vlsfoOwner, d.vlsfoCharterer])) || 100;
+
+              return (
+                <div className="space-y-6 pt-2">
+                  {last5Days.map((data, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="text-sm font-medium text-foreground">
+                        {data.date}
+                      </div>
+                      
+                      {/* Owner Bar */}
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="w-16 text-muted-foreground">Owner</span>
+                        <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary transition-all duration-500 rounded-full"
+                            style={{ width: `${(data.vlsfoOwner / maxFuel) * 100}%` }}
+                          />
+                        </div>
+                        <span className="w-14 text-right font-medium">{data.vlsfoOwner.toFixed(1)} MT</span>
+                      </div>
+
+                      {/* Charterer Bar */}
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="w-16 text-muted-foreground">Charterer</span>
+                        <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-accent transition-all duration-500 rounded-full"
+                            style={{ width: `${(data.vlsfoCharterer / maxFuel) * 100}%` }}
+                          />
+                        </div>
+                        <span className="w-14 text-right font-medium">{data.vlsfoCharterer.toFixed(1)} MT</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
           </CardContent>
         </Card>
 
