@@ -1048,21 +1048,24 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
           </CardContent>
         </Card>
 
-        {/* 4. Ship's Additional Remarks */}
-        {formData.remarks && formData.remarks.trim() !== "" && (
-          <Card>
-            <CardHeader className="pb-3 bg-muted/20 border-b">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <FileText className="h-4 w-4 text-primary" />
-                Ship's Additional Remarks
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="bg-muted/30 border border-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap">
-                {formData.remarks}
-              </div>
-            </CardContent>
-          </Card>
+       {/* 4. Ship's Additional Remarks */}
+        <Card>
+          <CardHeader className="pb-3 bg-muted/20 border-b">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <FileText className="h-4 w-4 text-primary" />
+              Ship's Additional Remarks
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="bg-muted/30 border border-muted p-4 rounded-lg text-sm whitespace-pre-wrap min-h-[60px] flex items-center">
+              {formData.remarks && formData.remarks.trim() !== "" ? (
+                <span className="text-foreground">{formData.remarks}</span>
+              ) : (
+                <span className="text-muted-foreground italic">No additional remarks entered for today.</span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
         )}
 
       </div>
