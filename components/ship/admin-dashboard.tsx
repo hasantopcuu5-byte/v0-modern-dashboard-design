@@ -775,6 +775,27 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
             Fresh Water, Sludge & Garbage
           </CardTitle>
         </CardHeader>
+        {/* Barlar olmadan eklenen Slop, Sewage ve Bilge değerleri */}
+          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border">
+            <div className="space-y-1">
+              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                <Droplet className="h-3 w-3" /> Slop Tank
+              </span>
+              <p className="text-sm font-semibold">{formData.slop?.toFixed(1) || 0} m³</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                <Droplet className="h-3 w-3" /> Sewage
+              </span>
+              <p className="text-sm font-semibold">{formData.sewage?.toFixed(1) || 0} m³</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                <Droplet className="h-3 w-3" /> Bilge
+              </span>
+              <p className="text-sm font-semibold">{formData.bilge?.toFixed(1) || 0} m³</p>
+            </div>
+          </div>
         <CardContent className="space-y-6 pt-4">
 
           {/* Fresh Water */}
