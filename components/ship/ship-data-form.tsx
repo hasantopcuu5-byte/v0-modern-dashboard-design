@@ -596,7 +596,7 @@ export function ShipDataForm({
 
         <Separator className="my-4" />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4"> {/* md:grid-cols-5 olarak değiştirdik */}
           <FormField
             label="Slop"
             id="slop"
@@ -618,6 +618,15 @@ export function ShipDataForm({
             id="sewage"
             value={formData.sewage}
             onChange={(v) => updateField("sewage", parseFloat(v) || 0)}
+            unit="m³"
+            step="0.1"
+          />
+          {/* YENİ EKLENEN BILGE ALANI */}
+          <FormField
+            label="Bilge"
+            id="bilge"
+            value={formData.bilge}
+            onChange={(v) => updateField("bilge", parseFloat(v) || 0)}
             unit="m³"
             step="0.1"
           />
