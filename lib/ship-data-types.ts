@@ -1,19 +1,18 @@
 export interface ShipFormData {
+  // General Voyage & Distance
   operation: string;
+  cargo: string;
   dateTime: string;
   steamingTime: number;
   distanceCoveredOwner: number;
   distanceCoveredCharterer: number;
+  dailyLogDistance: number;
   avgRpm: number;
   orderedSpeed: number;
   dailyLogDistanceOwner: number;
   meSlipPercent: number;
   charterpartyTerm: string;
   cargoQuantity: number;
-  export interface ShipFormData 
-  cargo?: string;
-  dailyLogDistance?: number;
-}
 
   // Engine & Generator Running Hours
   meLoadPercent: number;
@@ -80,10 +79,12 @@ export interface CospData {
 
 export const defaultFormData: ShipFormData = {
   operation: "at-sea",
+  cargo: "",
   dateTime: new Date().toISOString().slice(0, 16),
   steamingTime: 24,
   distanceCoveredOwner: 312.5,
   distanceCoveredCharterer: 308.2,
+  dailyLogDistance: 312.5,
   avgRpm: 85,
   orderedSpeed: 13.5,
   dailyLogDistanceOwner: 312.5,
