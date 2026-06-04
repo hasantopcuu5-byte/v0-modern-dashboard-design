@@ -94,7 +94,6 @@ const generateHistoricalData = (currentData: ShipFormData) => {
 
     data.push({
       date: dateStr,
-      orderedSpeed: currentData.orderedSpeed,
       avgSpeedOwner:
         i === 0
           ? currentData.distanceCoveredOwner / currentData.steamingTime
@@ -247,11 +246,9 @@ function ROBTracker({
   const lsmgoRob =
     cospData.lsmgoInitial + formData.lsmgoSupply - totalLsmgoConsumedOwner;
 
-  // DYNAMIC C/P FUEL LIMIT CALCULATION
   const cpFuelMatch = formData.charterpartyTerm.match(/Abt\s*([0-9.]+)\s*Mt/i);
   const cpDailyFuelLimit = cpFuelMatch ? parseFloat(cpFuelMatch[1]) : 0;
   
-  // Eğer listeden C/P seçildiyse (steaming time'a göre) orantıla, yoksa manuel Charterer değerini kullan
   const cpVoyageLimitVlsfo = cpDailyFuelLimit > 0 
     ? (cpDailyFuelLimit / 24) * formData.steamingTime 
     : totalVlsfoAllowed;
@@ -259,7 +256,6 @@ function ROBTracker({
   const vlsfoDiff = cpVoyageLimitVlsfo - totalVlsfoConsumedOwner;
   const lsmgoDiff = totalLsmgoAllowed - totalLsmgoConsumedOwner;
 
-  // ±5% tolerance: grey zone
   const vlsfoBase = cpDailyFuelLimit > 0 ? cpVoyageLimitVlsfo : totalVlsfoAllowed;
   const vlsfoStatus: FuelStatus =
     Math.abs(vlsfoDiff) <= vlsfoBase * 0.05 ? "grey" : vlsfoDiff > 0 ? "green" : "red";
@@ -306,7 +302,6 @@ function ROBTracker({
               </div>
             </div>
 
-            {/* VLSFO DIFFERENCE BOX */}
             <div className={`p-4 border-2 rounded-xl mt-4 ${fuelStatusStyle(vlsfoStatus).box}`}>
               <div className="flex flex-col gap-1 text-center">
                 <span className="text-sm font-medium text-foreground">
@@ -353,7 +348,6 @@ function ROBTracker({
               </div>
             </div>
 
-            {/* LSMGO DIFFERENCE BOX - Tasarımı VLSFO'ya benzetildi */}
             <div className={`p-4 border-2 rounded-xl mt-4 ${fuelStatusStyle(lsmgoStatus).box}`}>
               <div className="flex flex-col gap-1 text-center">
                 <span className="text-sm font-medium text-foreground">
@@ -389,11 +383,9 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
   const sogStwDiff =
     formData.distanceCoveredOwner - formData.distanceCoveredCharterer;
 
-  // DYNAMIC C/P SPEED LIMIT CALCULATION
   const cpSpeedMatch = formData.charterpartyTerm.match(/Abt\s*([0-9.]+)\s*Kt/i);
   const cpSpeedTarget = cpSpeedMatch ? parseFloat(cpSpeedMatch[1]) : 0;
 
-  // HIZ RENKLENDİRMESİ (Hedefi aşarsa Kırmızı, Altındaysa Yeşil)
   const ownerSpeedColor = cpSpeedTarget > 0 
     ? (avgSpeedOwner > cpSpeedTarget ? "text-destructive" : "text-green-500") 
     : "";
@@ -451,7 +443,7 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
 
   return (
     <div className="space-y-6">
-      {/* 1. General Details Card (En Üste Taşındı) */}
+      {/* 1. General Details Card (Yeniden Düzenlendi) */}
       <Card>
         <CardHeader className="pb-3 bg-muted/20 border-b">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -466,8 +458,16 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
               <p className="font-medium capitalize"><Badge variant="outline">{formData.operation.replace('-', ' ')}</Badge></p>
             </div>
             <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">Cargo</span>
+              <p className="font-medium">{formData.cargo || '-'}</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">Cargo/Ballast Qty</span>
+              <p className="font-medium">{formData.cargoQuantity?.toLocaleString() || 0} MT</p>
+            </div>
+            <div className="space-y-1">
               <span className="text-muted-foreground text-xs">Date & Time</span>
-              <p className="font-medium">{new Date(formData.dateTime).toLocaleString()}</p>
+              <p className="font-medium">{formData.dateTime ? new Date(formData.dateTime).toLocaleString() : '-'}</p>
             </div>
             <div className="space-y-1">
               <span className="text-muted-foreground text-xs">Steaming Time</span>
@@ -478,16 +478,24 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
               <p className="font-medium">{formData.charterpartyTerm || '-'}</p>
             </div>
             <div className="space-y-1">
-              <span className="text-muted-foreground text-xs">Cargo Qty</span>
-              <p className="font-medium">{formData.cargoQuantity.toLocaleString()} MT</p>
-            </div>
-            <div className="space-y-1">
               <span className="text-muted-foreground text-xs">M/E Slip</span>
               <p className="font-medium">{formData.meSlipPercent}%</p>
             </div>
             <div className="space-y-1">
               <span className="text-muted-foreground text-xs">Avr. RPM</span>
               <p className="font-medium">{formData.avgRpm}</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">Daily Log Distance</span>
+              <p className="font-medium">{formData.dailyLogDistance || 0} NM</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">Dist. Covered (Owner)</span>
+              <p className="font-medium">{formData.distanceCoveredOwner || 0} NM</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-muted-foreground text-xs">Dist. Covered (Charterer)</span>
+              <p className="font-medium">{formData.distanceCoveredCharterer || 0} NM</p>
             </div>
           </div>
         </CardContent>
@@ -568,7 +576,7 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
 
       {/* Charts */}
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Speed Analysis Chart */}
+        {/* Speed Analysis Chart (Sadece Owner ve Charterer çizgileri bırakıldı) */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
@@ -602,14 +610,6 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     labelStyle={{ color: "hsl(var(--card-foreground))" }}
                   />
                   <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="orderedSpeed"
-                    name="Ordered Speed"
-                    stroke="hsl(var(--muted-foreground))"
-                    strokeDasharray="5 5"
-                    dot={false}
-                  />
                   <Line
                     type="monotone"
                     dataKey="avgSpeedOwner"
@@ -994,5 +994,3 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
     </div>
   );
 }
-
-
