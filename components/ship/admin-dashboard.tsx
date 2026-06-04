@@ -1,4 +1,4 @@
-
+"use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -443,7 +443,7 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
 
   return (
     <div className="space-y-6">
-      {/* 1. General Details Card (Yeniden Düzenlendi) */}
+      {/* 1. General Details Card */}
       <Card>
         <CardHeader className="pb-3 bg-muted/20 border-b">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -576,7 +576,7 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
 
       {/* Charts */}
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Speed Analysis Chart (Sadece Owner ve Charterer çizgileri bırakıldı) */}
+        {/* Speed Analysis Chart */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
@@ -600,6 +600,7 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     className="text-muted-foreground"
                   />
                   <Tooltip
+                    wrapperStyle={{ zIndex: 100 }}
                     contentStyle={{
                       backgroundColor: "hsl(var(--card))",
                       borderColor: "hsl(var(--border))",
@@ -655,6 +656,7 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     className="text-muted-foreground"
                   />
                   <Tooltip
+                    wrapperStyle={{ zIndex: 100 }}
                     contentStyle={{
                       backgroundColor: "hsl(var(--card))",
                       borderColor: "hsl(var(--border))",
@@ -714,6 +716,7 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
                     className="text-muted-foreground"
                   />
                   <Tooltip
+                    wrapperStyle={{ zIndex: 100 }}
                     contentStyle={{
                       backgroundColor: "hsl(var(--card))",
                       borderColor: "hsl(var(--border))",
