@@ -887,44 +887,32 @@ export function AdminDashboard({ formData, onImport }: AdminDashboardProps) {
             );
           })()}
 {/* Slop */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-slate-500 shrink-0" />
-                <span className="font-medium">Slop Tank</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <span className="font-semibold text-foreground">{formData.slop?.toFixed(1) || 0}</span>
-                <span>m³</span>
-              </div>
+          <div className="flex items-center gap-2 text-sm">
+            <div className="w-3 h-3 rounded-full bg-slate-500 shrink-0" />
+            <span className="font-medium w-28">Slop Tank</span>
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <span className="font-semibold text-foreground">{formData.slop?.toFixed(1) || 0}</span>
+              <span>m³</span>
             </div>
           </div>
 
           {/* Sewage */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-stone-500 shrink-0" />
-                <span className="font-medium">Sewage</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <span className="font-semibold text-foreground">{formData.sewage?.toFixed(1) || 0}</span>
-                <span>m³</span>
-              </div>
+          <div className="flex items-center gap-2 text-sm">
+            <div className="w-3 h-3 rounded-full bg-stone-500 shrink-0" />
+            <span className="font-medium w-28">Sewage</span>
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <span className="font-semibold text-foreground">{formData.sewage?.toFixed(1) || 0}</span>
+              <span>m³</span>
             </div>
           </div>
 
           {/* Bilge */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-cyan-600 shrink-0" />
-                <span className="font-medium">Bilge</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <span className="font-semibold text-foreground">{formData.bilge?.toFixed(1) || 0}</span>
-                <span>m³</span>
-              </div>
+          <div className="flex items-center gap-2 text-sm">
+            <div className="w-3 h-3 rounded-full bg-purple-500 shrink-0" />
+            <span className="font-medium w-28">Bilge</span>
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <span className="font-semibold text-foreground">{formData.bilge?.toFixed(1) || 0}</span>
+              <span>m³</span>
             </div>
           </div>
           <p className="text-xs text-muted-foreground pt-1 border-t border-border">
